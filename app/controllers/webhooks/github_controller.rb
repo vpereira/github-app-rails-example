@@ -8,8 +8,7 @@ class Webhooks::GithubController < ApplicationController
       installation_id = params[:installation][:id]
       repo = params[:repository][:full_name]
       number = params[:number]
-      comment = 'This is a comment from GitHub App!'
-
+      comment = 'This is a comment from our GitHub App! :robot:'
       github_client_for(installation_id).add_comment(repo, number, comment)
     end
 
@@ -28,6 +27,7 @@ class Webhooks::GithubController < ApplicationController
   end
 
   def github_client_for(installation_id)
+
     current = Time.current.to_i
 
     key = {
@@ -38,6 +38,7 @@ class Webhooks::GithubController < ApplicationController
     jwt = JWT.encode(key, github_app_private_key, 'RS256')
 
     bearer_client = Octokit::Client.new(bearer_token: jwt)
+
     access_token = bearer_client.create_app_installation_access_token(installation_id)[:token]
 
     Octokit::Client.new(access_token: access_token)
